@@ -369,6 +369,29 @@
             color: white;
         }
 
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25d366, #128c7e);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .whatsapp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, #128c7e, #25d366);
+        }
+
         .error-message {
             display: none;
             background: linear-gradient(135deg, var(--error-color), #c53030);
@@ -778,9 +801,12 @@
 
         <div class="success-message" id="successMessage">
             <i class="fas fa-check-circle"></i>
-            <h3>✅ Evaluación Enviada Exitosamente</h3>
-            <p>Sus resultados han sido transmitidos a nuestro departamento de calidad en <strong>administracion@excursionesoasis.com</strong></p>
-            <p>Agradecemos profundamente su tiempo y valiosa retroalimentación. Su participación es fundamental para mantener nuestro compromiso con la excelencia.</p>
+            <h3>✅ Evaluación Completada Exitosamente</h3>
+            <p>¡Gracias por su valiosa retroalimentación! Para enviar los resultados de su encuesta, haga clic en el botón de WhatsApp a continuación.</p>
+            <p>Los resultados se enviarán directamente al equipo de Excursiones OASIS al número <strong>+51 974 687 742</strong>.</p>
+            <button class="whatsapp-btn" id="whatsappBtn">
+                <i class="fab fa-whatsapp"></i> Enviar Resultados por WhatsApp
+            </button>
         </div>
 
         <div class="error-message" id="errorMessage">
@@ -807,6 +833,8 @@
             const progressBar = document.getElementById('progressBar');
             const successMessage = document.getElementById('successMessage');
             const errorMessage = document.getElementById('errorMessage');
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            let surveyData = {};
             
             // Update progress bar as user fills out the form
             const inputs = form.querySelectorAll('input, textarea, select');
@@ -902,7 +930,7 @@
                 if (validateForm()) {
                     // Collect form data
                     const formData = new FormData(form);
-                    const surveyData = {};
+                    surveyData = {};
                     
                     for (let [key, value] of formData.entries()) {
                         surveyData[key] = value;
@@ -917,48 +945,6 @@
                         }
                     });
                     
-                    // Create email content
-                    let emailContent = `
-<h2>Resultados de Test - Encuesta de Satisfacción Corporativa</h2>
-<hr style="border: 0; border-top: 2px solid #2c5282; margin: 20px 0;">
-<p><strong>Fecha de Recepción:</strong> ${new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-<p><strong>Nombre del Cliente:</strong> ${surveyData.clientName}</p>
-<p><strong>Empresa/Institución:</strong> ${surveyData.companyName}</p>
-<p><strong>Servicio Evaluado:</strong> ${surveyData.productService}</p>
-<p><strong>Email Corporativo:</strong> ${surveyData.email}</p>
-<p><strong>Fecha de Evaluación:</strong> ${surveyData.date}</p>
-
-<h3 style="color: #2c5282; margin: 20px 0 10px 0;">Calidad del Servicio</h3>
-<ul style="margin-left: 20px;">
-    <li><strong>Calidad General:</strong> ${surveyData.qualityRating}/5</li>
-    <li><strong>Cumplimiento de Expectativas:</strong> ${surveyData.expectationsRating}/5</li>
-</ul>
-
-<h3 style="color: #2c5282; margin: 20px 0 10px 0;">Atención al Cliente</h3>
-<ul style="margin-left: 20px;">
-    <li><strong>Profesionalismo y Amabilidad:</strong> ${surveyData.staffRating}/5</li>
-    <li><strong>Eficiencia en Resolución:</strong> ${surveyData.efficiencyRating}/5</li>
-</ul>
-
-<h3 style="color: #2c5282; margin: 20px 0 10px 0;">Puntualidad y Cumplimiento</h3>
-<ul style="margin-left: 20px;">
-    <li><strong>Cumplimiento de Plazos:</strong> ${surveyData.deliveryRating}/5</li>
-</ul>
-
-<h3 style="color: #2c5282; margin: 20px 0 10px 0;">Retroalimentación Detallada</h3>
-<p><strong>Aspectos Destacados:</strong><br>${surveyData.positiveFeedback}</p>
-<p><strong>Áreas de Oportunidad:</strong><br>${surveyData.improvementSuggestions}</p>
-
-<h3 style="color: #2c5282; margin: 20px 0 10px 0;">Documentación Adjunta</h3>
-<p>${surveyData.evidenceFiles ? 'Se adjuntaron archivos de evidencia' : 'No se adjuntaron archivos'}</p>
-
-<hr style="border: 0; border-top: 2px solid #2c5282; margin: 20px 0;">
-<p style="font-style: italic; color: #4a5568;">Este mensaje fue generado automáticamente desde el sistema de encuestas corporativas de Excursiones OASIS.</p>
-                    `;
-                    
-                    // In this environment, we can't actually send emails, so we'll simulate it
-                    // In a real application, you would use a server-side script or an email API
-                    
                     // Show success message
                     successMessage.style.display = 'block';
                     form.style.display = 'none';
@@ -966,17 +952,58 @@
                     
                     // Scroll to success message
                     successMessage.scrollIntoView({ behavior: 'smooth' });
-                    
-                    // Simulate sending email (in a real app, this would be handled by a server)
-                    console.log('Email would be sent to: administracion@excursionesoasis.com');
-                    console.log('Subject: Resultados de Test');
-                    console.log('Content:', emailContent);
-                    
                 } else {
                     // Show error message
                     errorMessage.style.display = 'block';
                     errorMessage.scrollIntoView({ behavior: 'smooth' });
                 }
+            });
+            
+            // Handle WhatsApp button click
+            whatsappBtn.addEventListener('click', function() {
+                // Create formatted message for WhatsApp
+                let whatsappMessage = `
+*RESULTADOS DE TEST - ENCUESTA DE SATISFACCIÓN*
+*Excursiones OASIS*
+
+*Fecha de Recepción:* ${new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}
+*Nombre del Cliente:* ${surveyData.clientName || 'No especificado'}
+*Empresa/Institución:* ${surveyData.companyName || 'No especificado'}
+*Servicio Evaluado:* ${surveyData.productService || 'No especificado'}
+*Email Corporativo:* ${surveyData.email || 'No especificado'}
+*Fecha de Evaluación:* ${surveyData.date || 'No especificado'}
+
+*CALIDAD DEL SERVICIO*
+• Calidad General: ${surveyData.qualityRating || 'N/A'}/5
+• Cumplimiento de Expectativas: ${surveyData.expectationsRating || 'N/A'}/5
+
+*ATENCIÓN AL CLIENTE*
+• Profesionalismo y Amabilidad: ${surveyData.staffRating || 'N/A'}/5
+• Eficiencia en Resolución: ${surveyData.efficiencyRating || 'N/A'}/5
+
+*PUNTUALIDAD Y CUMPLIMIENTO*
+• Cumplimiento de Plazos: ${surveyData.deliveryRating || 'N/A'}/5
+
+*RETROALIMENTACIÓN DETALLADA*
+• Aspectos Destacados: ${surveyData.positiveFeedback || 'No proporcionado'}
+• Áreas de Oportunidad: ${surveyData.improvementSuggestions || 'No proporcionado'}
+
+*DOCUMENTACIÓN ADJUNTA*
+${surveyData.evidenceFiles ? 'Se adjuntaron archivos de evidencia' : 'No se adjuntaron archivos'}
+
+---
+Encuesta completada el ${new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                `.trim();
+                
+                // URL encode the message
+                const encodedMessage = encodeURIComponent(whatsappMessage);
+                const phoneNumber = '+51974687742';
+                
+                // Open WhatsApp with the pre-filled message
+                const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+                
+                // Open in new tab
+                window.open(whatsappUrl, '_blank');
             });
             
             // File upload handling
